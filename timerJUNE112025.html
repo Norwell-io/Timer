@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Countdown Timer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: rgba(236, 173, 228, 0.5);
+            --secondary-glow: rgba(131, 228, 237, 0.5);
+            --text-color: #ffffff;
+            --text-color-dark: #e0e0e0;
+            --accent-color: #ff7675;
+            --border-radius: 16px;
+            --box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1c1a3a, #4a4689, #7b68ee);
+            background-size: 200% 200%;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            animation: gradient-animation 15s ease infinite;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .header h1 {
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+        
+        .header p {
+            font-weight: 300;
+            margin: 0.25rem 0 0;
+            opacity: 0.8;
+        }
+
+        .timer-container {
+            width: 90%;
+            max-width: 580px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .timer-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .time-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: baseline; /* Align numbers at the bottom */
+        }
+
+        #countdown {
+            font-family: 'Roboto Mono', monospace;
+            font-size: clamp(2.5rem, 12vw, 4.5rem);
+            font-weight: 400;
+            margin: 0;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+        }
+
+        #milliseconds {
+            font-family: 'Roboto Mono', monospace;
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            font-weight: 600;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-left: 10px;
+            min-width: 60px; /* Prevents layout shift */
+            text-align: center;
+        }
+
+        #countdown.ending {
+            color: var(--accent-color);
+            text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            to {
+                transform: scale(1.02);
+            }
+        }
+
+        .inputs {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 300;
+            margin-bottom: 8px;
+            color: var(--text-color-dark);
+        }
+
+        input {
+            width: 100px;
+            padding: 12px;
+            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px var(--secondary-glow);
+        }
+
+        input::-webkit-inner-spin-button,
+        input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .buttons { display: flex; justify-content: center; gap: 1rem; }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            background: transparent;
+            min-width: 130px;
+        }
+
+        button:focus { outline: none; }
+        button:focus-visible { box-shadow: 0 0 0 3px var(--secondary-glow); }
+        button:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.7); }
+        #startButton { background: rgba(255, 255, 255, 0.15); }
+        #startButton:hover { box-shadow: 0 0 15px var(--primary-glow); }
+        #resetButton:hover { color: var(--accent-color); border-color: var(--accent-color); }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show { opacity: 1; }
+
+        .modal-content {
+            display: flex; /* Use flexbox for centering */
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically */
+            background: rgba(40, 38, 70, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal.show .modal-content { transform: scale(1); }        .modal-content h2 {
+            margin: 0;
+            color: var(--accent-color);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem; /* Add space between text and button */
+        }
+
+        #okButton {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+            padding: 12px 40px;
+        }
+        #okButton:hover { background-color: #d63031; border-color: #d63031; }
+
+        .icon { width: 20px; height: 20px; margin-right: 8px; fill: currentColor; }
+
+        @media (max-width: 600px) {
+            .timer-container { padding: 2rem 1.5rem; width: 95%; }
+            .inputs { gap: 1rem; }
+            input { width: 80px; }
+            .buttons { flex-direction: column; width: 100%; gap: 0.75rem; }
+        }
+        /* Footer Styles */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-color-dark);
+    font-size: 0.8rem;
+    font-weight: 300;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    z-index: -1; /* Place it behind the main content if they overlap */
+}
+
+footer a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #ffffff;
+}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1> Countdown Timer</h1>
+        <p>Set a duration and press start.</p>
+    </div>
+    <div class="timer-container">
+        <div class="timer-display">
+            <div class="time-wrapper">
+                <h1 id="countdown">00:00:00</h1>
+                <span id="milliseconds">.00</span>
+            </div>
+        </div>
+        <div class="inputs">
+            <div class="input-group">
+                <label for="hours">Hours</label>
+                <input type="number" id="hours" placeholder="00" min="0" max="99">
+            </div>
+            <div class="input-group">
+                <label for="minutes">Minutes</label>
+                <input type="number" id="minutes" placeholder="00" min="0" max="59">
+            </div>
+            <div class="input-group">
+                <label for="seconds">Seconds</label>
+                <input type="number" id="seconds" placeholder="00" min="0" max="59">
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="startButton">
+                <svg class="icon" id="start-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                <svg class="icon" id="pause-icon" style="display: none;" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                <span id="start-button-text">Start</span>
+            </button>
+            <button id="resetButton">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg>
+                Reset
+            </button>
+        </div>
+    </div>
+    
+    <div id="timeUpModal" class="modal">
+        <div class="modal-content">
+            <h2>Time is up!</h2>
+            <button id="okButton">OK</button>
+        </div>
+    </div>
+    
+    <script>
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let alarmInterval = null;
+
+        function playBellSound() { /* Same synthesized bell as before */
+            try {
+                const now = audioContext.currentTime;
+                const osc1 = audioContext.createOscillator(); const gain1 = audioContext.createGain();
+                osc1.type = 'triangle'; osc1.frequency.value = 987; osc1.connect(gain1).connect(audioContext.destination);
+                const osc2 = audioContext.createOscillator(); const gain2 = audioContext.createGain();
+                osc2.type = 'square'; osc2.frequency.value = 1318; osc2.connect(gain2).connect(audioContext.destination);
+                gain1.gain.setValueAtTime(0, now); gain1.gain.linearRampToValueAtTime(0.3, now + 0.01); gain1.gain.exponentialRampToValueAtTime(0.0001, now + 1.75);
+                gain2.gain.setValueAtTime(0, now); gain2.gain.linearRampToValueAtTime(0.2, now + 0.02); gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+                osc1.start(now); osc2.start(now); osc1.stop(now + 2); osc2.stop(now + 2);
+            } catch (error) { console.error("Could not play sound:", error); }
+        }
+        function stopBellSound() { if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }}
+
+        // --- TIMER LOGIC (Updated for Milliseconds) ---
+        let countdown;
+        let endTime;
+        let remainingTimeOnPause;
+        let isRunning = false;
+        
+        const display = document.getElementById('countdown');
+        const msDisplay = document.getElementById('milliseconds');
+        const startButton = document.getElementById('startButton');
+        const startButtonText = document.getElementById('start-button-text');
+        const startIcon = document.getElementById('start-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const resetButton = document.getElementById('resetButton');
+        const modal = document.getElementById('timeUpModal');
+        const okButton = document.getElementById('okButton');
+        
+        function toggleButton(running) {
+            isRunning = running;
+            startButtonText.textContent = running ? "Pause" : "Start";
+            startIcon.style.display = running ? 'none' : 'inline';
+            pauseIcon.style.display = running ? 'inline' : 'none';
+        }
+
+        function updateDisplay(remainingMs) {
+            if (remainingMs <= 0) {
+                display.textContent = "00:00:00";
+                msDisplay.textContent = ".00";
+                display.classList.remove('ending');
+                return;
+            }
+            const h = Math.floor(remainingMs / 3600000);
+            const m = Math.floor((remainingMs % 3600000) / 60000);
+            const s = Math.floor((remainingMs % 60000) / 1000);
+            const ms = Math.floor((remainingMs % 1000) / 10);
+
+            display.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            msDisplay.textContent = `.${String(ms).padStart(2, '0')}`;
+
+            if (remainingMs <= 10000) display.classList.add('ending');
+            else display.classList.remove('ending');
+        }
+
+        function timer() {
+            const remaining = endTime - Date.now();
+            updateDisplay(remaining);
+
+            if (remaining <= 0) {
+                clearInterval(countdown);
+                toggleButton(false);
+                playBellSound();
+                alarmInterval = setInterval(playBellSound, 1300); // FASTER CHIME
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
+        }
+
+        startButton.addEventListener('click', () => {
+            if (audioContext.state === 'suspended') audioContext.resume();
+            
+            if (!isRunning) {
+                let duration;
+                if (remainingTimeOnPause) {
+                    duration = remainingTimeOnPause;
+                } else {
+                    const h = parseInt(document.getElementById('hours').value) || 0;
+                    const m = parseInt(document.getElementById('minutes').value) || 0;
+                    const s = parseInt(document.getElementById('seconds').value) || 0;
+                    duration = (h * 3600 + m * 60 + s) * 1000;
+                }
+                
+                if (duration > 0) {
+                    endTime = Date.now() + duration;
+                    countdown = setInterval(timer, 47); // Fast interval for ms
+                    toggleButton(true);
+                }
+            } else {
+                clearInterval(countdown);
+                remainingTimeOnPause = endTime - Date.now();
+                toggleButton(false);
+            }
+        });
+
+        function resetTimer() {
+            clearInterval(countdown);
+            stopBellSound();
+            toggleButton(false);
+            
+            remainingTimeOnPause = 0;
+            updateDisplay(0);
+            
+            ['hours', 'minutes', 'seconds'].forEach(id => document.getElementById(id).value = '');
+            
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        resetButton.addEventListener('click', resetTimer);
+        okButton.addEventListener('click', resetTimer);
+
+        // Input validation
+        ['hours', 'minutes', 'seconds'].forEach(id => {
+            const input = document.getElementById(id);
+            input.addEventListener('input', function() {
+                let max = (id === 'hours') ? 99 : 59;
+                if (parseInt(this.value) > max) this.value = max;
+                if (parseInt(this.value) < 0) this.value = 0;
+            });
+        });
+    </script>
+    <footer>
+    <p>© 2025 Countdown Timer | Designed by <a href="#" target="_blank">NORWEL</a></p>
+</footer>
+</body>
+</html>
